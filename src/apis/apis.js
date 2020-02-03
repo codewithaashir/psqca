@@ -6,6 +6,7 @@ export const Apis={
     Alerts:BURL+'alert',
     SearchList:BURL+"LabSearch/",
     ProductList:BURL+'productlist/',
-    Feedback:BURL+'feedback/'
+    Feedback:BURL+'feedback/',
+    ProductSearch:BURL+'productsearch/',
 
 } 

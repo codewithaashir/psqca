@@ -22,21 +22,81 @@ function SearchProduct(props) {
   const [manufacturer, setManufacturer] = useState('')
   const [brandName, setBrandName] = useState('')
   const [loading,setLoading]=useState('');
+  const [productlist,setProductList]=useState([]);
   const [list,updateList]=useState([]); 
 useEffect(()=>{
-  Axios.get(Apis.SearchList+3).then(res=>{
+  Axios.get(Apis.ProductList).then(res=>{
     setLoading(false);
     if(res.data[0].Remarks=='OK'){
-      updateList(res.data[0].Result);
+      updateList(res.data[0].Result.filter((item)=>item.pssname!=""));
+      
     }
- console.warn(JSON.stringify(res.data[0]));
+ //console.warn(JSON.stringify(res.data[0].Result[0]));
    
   //props.navigation.navigate('Dashboard')
 }).catch(err=>{
     setLoading(false)
     console.warn(err);
 })
-},[]) 
+}) 
+const SEARCH=async ()=>{
+  //props.navigation.navigate('SearchResult')
+  if(manufacturer&&licenseNo&&brandName&&product){
+    await Axios.get(Apis.ProductSearch+licenseNo+'/'+manufacturer+'/'+product+'/'+brandName).then(res=>{
+      setProductList(res.data[0].Result);
+      props.navigation.navigate('SearchResult',{data:productlist})
+    }).catch(err=>{
+      console.warn(err.message);
+    })
+    return;
+  }
+  if(manufacturer&&licenseNo){
+    await Axios.get(Apis.ProductSearch+licenseNo+'/'+manufacturer+'/_'+'/_').then(res=>{
+      setProductList(res.data[0].Result);
+      props.navigation.navigate('SearchResult',{data:productlist})
+    }).catch(err=>{
+      console.warn(err.message);
+    })
+    return;
+  }
+  if(manufacturer&&!licenseNo&&!product&&!brandName){
+    await Axios.get(Apis.ProductSearch+'_/'+manufacturer+'/_'+'/_').then(res=>{
+      setProductList(res.data[0].Result);
+      props.navigation.navigate('SearchResult',{data:productlist})
+    }).catch(err=>{
+      console.warn(err.message);
+    })
+    return;
+  }
+  if(licenseNo&&!manufacturer&&!product&&!brandName) {
+    await Axios.get(Apis.ProductSearch+licenseNo+'/_'+'/_'+'/_').then(res=>{
+      setProductList(res.data[0].Result);
+      props.navigation.navigate('SearchResult',{data:productlist})
+    }).catch(err=>{
+      console.warn(err.message);
+    })
+    return;
+  }
+  if(product&&!manufacturer&&!licenseNo&&!brandName) {
+    await Axios.get(Apis.ProductSearch+'_/_'+'/'+product+'/_').then(res=>{
+      setProductList(res.data[0].Result);
+      props.navigation.navigate('SearchResult',{data:productlist})
+    }).catch(err=>{
+      console.warn(err.message);
+    })
+    return;
+  }
+  if(brandName&&!licenseNo&&!manufacturer&&!product){
+    await Axios.get(Apis.ProductSearch+'_/_'+'/_'+'/'+brandName).then(res=>{
+      setProductList(res.data[0].Result);
+      props.navigation.navigate('SearchResult',{data:productlist})
+    }).catch(err=>{
+      console.warn(err.message);
+    })
+    return;
+  }
+  
+}
 
   return (
     <ScrollView
@@ -78,9 +138,10 @@ useEffect(()=>{
             onValueChange={value => setProduct(value)}
             style={styles.picker}
           >
-            <Picker.Item label="Motor Cycle" value='motorCycle' />
-            <Picker.Item label="Car" value='car' />
-            <Picker.Item label="Cycle" value='cycle' />
+            {list.map((value,index)=>(
+              <Picker.Item label={value.pssname} value={value.pssname} />
+            ))
+             }
           </Picker>
         </View>
         <View
@@ -107,7 +168,7 @@ useEffect(()=>{
         </View>
         <TouchableOpacity
           style={styles.subtmitButton}
-          onPress={()=> props.navigation.navigate('SearchResult')}
+          onPress={SEARCH }
         >
           <Text
             style={styles.buttonText}

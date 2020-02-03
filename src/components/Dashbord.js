@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Component } from 'react';
-import { ImageBackground, Text, View, BackHandler, AsyncStorage, Alert,Image, TouchableOpacity,FlatList, Linking } from 'react-native';
+import { ImageBackground, Text, View, BackHandler, AsyncStorage, Alert, TouchableOpacity,FlatList, Linking,Image } from 'react-native';
 import { withNavigation } from 'react-navigation';
-
+import {Toast} from 'native-base';
 import { Constant } from '../Constants/appconstants';
 const styles = {
     container: {
@@ -94,6 +94,23 @@ class Dashboard extends Component {
           </View>
         )
       }
+      Logout=()=>{
+        //console.warn('heell')
+        AsyncStorage.removeItem('UserDetail')
+        .then(value => {
+          AsyncStorage.removeItem('CART');
+          global.User = null;
+          this.props.navigation.navigate('Login');
+          Toast.show({
+            text: "Logout",
+          });
+        })
+        .catch(reason => {
+          Toast.show({
+            text: reason.message,
+          });
+        });
+      }
     render() {
         return (
             <View style={styles.container}>
@@ -111,11 +128,14 @@ class Dashboard extends Component {
           //onEndReachedThreshold={0.3}
           />
                         
+            
                     </View>
-                
+
+            <TouchableOpacity activeOpacity={0.7} onPress={this.Logout}style={{flexDirection:'row',alignSelf:'center',height:30,justifyContent:'center'}}>
+              <Image source={require('../assets/log.png')} style={{width:150,height:50,resizeMopde:'contain'}}/>
+            </TouchableOpacity>       
                 </ImageBackground>
-   
-                
+             
             </View>
         )
     }

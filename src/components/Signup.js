@@ -1,9 +1,12 @@
 import React,{useState,useEffect} from 'react';
-import {ImageBackground,Text,Image,View,ScrollView,TouchableOpacity, Linking} from 'react-native';
+import {ImageBackground,Text,Image,View,ScrollView,TouchableOpacity, Linking,Modal} from 'react-native';
 import {withNavigation} from 'react-navigation';
 import { Constant } from '../Constants/appconstants';
-import {Input,Item,Icon,InputGroup} from 'native-base';
+import {Input,Item,Icon,InputGroup,Toast} from 'native-base';
+import { Loading } from '../Loaders/loading';
+
 import { Apis } from '../apis/apis';
+import Axios from 'axios';
 const styles={
     Container:{
         flex:1,
@@ -33,14 +36,24 @@ function Signup(props){
     const [password,setPassword]=useState('');
     const [mobile,setMobile]=useState('');
     const [company,setCompany]=useState('');
+    const [showError,setError]=useState({msg:'',sh:false});
+    const [loading,setLoading]=useState(false);
     const Sign=()=>{
         setLoading(true);
         Axios.post(Apis.Signup+name+'/'+'/'+email+'/'+mobile+'/'+password+'/'+company).then(res=>{
             setLoading(false)
-          console.warn(JSON.stringify(res));
+            props.navigation.goBack();
+            Toast.show({
+                text:"Successfully register",
+                duration:3000
+            })
+            
         }).catch(err=>{
             setLoading(false)
-            console.warn(err.message);
+            Toast.show({
+                text:err.message,
+                duration:2000
+            })
         })
         //props.navigation.navigate('Dashboard')
          
@@ -56,7 +69,7 @@ function Signup(props){
       return;
      }
      
-    if(!email||!password||!name||!mobile||!company){setError({msg:'All Field Required',sh:true})
+    if(!email||!password||!name||!mobile||!company){setError({msg:'One or more feilds missing!',sh:true})
      return;
     }
     Sign();
@@ -87,13 +100,20 @@ return(
               <Input placeholder='Enter Password' onChangeText={(text) => setPassword(text)} placeholderTextColor="#687373" />
           </InputGroup>
           <InputGroup borderType='rounded' >
-              <Icon active name='ios-paper' style={{color: Constant.backGroundColor}} />
-              <Input placeholder='Company' onChangeText={(text) => setCompany(text)} secureTextEntry={true} placeholderTextColor="#687373" />
+              <Icon active name='ios-home' style={{color: Constant.backGroundColor}} />
+              <Input placeholder='Company' onChangeText={(text) => setCompany(text)}  placeholderTextColor="#687373" />
           </InputGroup>
-          <TouchableOpacity activeOpacity={0.7} style={{borderWidth:0,flexDirection:'row',borderRadius:25,width:'50%',height:40,marginVertical:20,backgroundColor:Constant.backGroundColor,justifyContent:'center',alignItems:'center'}}>
+          {showError?<Text style={{color: "#c0392b", textAlign: 'center', marginTop: 10}}>{showError.msg}</Text>:null}
+
+          <TouchableOpacity activeOpacity={0.7} 
+          onPress={handleVerify}
+          style={{borderWidth:0,flexDirection:'row',borderRadius:25,width:'50%',height:40,marginVertical:20,backgroundColor:Constant.backGroundColor,justifyContent:'center',alignItems:'center'}}>
                <Text style={{color:'#fff',fontWeight:'bold'}}>SIGN UP</Text>
           </TouchableOpacity>
           </View>
+          <Modal transparent visible={loading}>
+              {Loading}
+            </Modal>
         </ScrollView>  
         </View> 
           </View>

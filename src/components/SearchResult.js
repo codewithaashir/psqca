@@ -63,18 +63,7 @@ function SearchResults(props) {
   const [loading,setLoading]=useState('');
  const [list,updateList]=useState([]); 
 useEffect(()=>{
-  Axios.get(Apis.SearchList+3).then(res=>{
-    setLoading(false);
-    if(res.data[0].Remarks=='OK'){
-      updateList(res.data[0].Result);
-    }
- console.warn(JSON.stringify(res.data[0]));
-   
-  //props.navigation.navigate('Dashboard')
-}).catch(err=>{
-    setLoading(false)
-    console.warn(err);
-})
+    updateList(props.navigation.getParam('data'))
 },[])
     return (
         <View
@@ -97,7 +86,7 @@ useEffect(()=>{
                 >
                     <FlatList
                         style={styles.flatlist}
-                        data={searchData}
+                        data={list}
                         ItemSeparatorComponent={() => (
                             <View
                                 style={{
@@ -109,13 +98,13 @@ useEffect(()=>{
                         )}
                         renderItem={({ item }) => (
                             <ResultItem
-                                title={item.title}
+                                title={'Conference'}
                                 product={item.product}
                                 manufacturer={item.manufacturer}
-                                licenseNo={item.LicenseNo}
-                                licenseIssueDate={item.licenseIssueDate}
-                                licenseValidUpto={item.LicenseValidUpto}
-                                licenseStatus={item.LicenseStatus}
+                                licenseNo={item.licenseno}
+                                licenseIssueDate={item.issuedate}
+                                licenseValidUpto={item.validupto}
+                                licenseStatus={item.status}
                             />
                         )}
                     />

@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {ImageBackground,Text,Image,View,ScrollView,TouchableOpacity, Linking,Modal} from 'react-native';
+import {ImageBackground,Text,Image,View,ScrollView,TouchableOpacity, Linking,Modal,AsyncStorage} from 'react-native';
 import {withNavigation} from 'react-navigation';
 import { Constant } from '../Constants/appconstants';
 import {Input,Item,Icon,InputGroup} from 'native-base';
@@ -42,8 +42,9 @@ function Login(props){
         Axios.get(Apis.Login+email+'/'+password).then(res=>{
             setLoading(false)
          if(res.data[0].Remarks=="OK"){   
-          console.warn(JSON.stringify(res.data[0]));
-          global.User=res.data[0].Results;
+          //console.warn(JSON.stringify(res.data[0]));
+          global.User=res.data[0].Result[0];
+          AsyncStorage.setItem('UserDetail',res.data[0].Result[0]);
           props.navigation.navigate('Dashboard')
         }
           //props.navigation.navigate('Dashboard')

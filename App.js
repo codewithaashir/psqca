@@ -11,7 +11,7 @@ import {
   StatusBar,
   BackHandler,AsyncStorage,Alert
 } from 'react-native';
-
+import {Root} from 'native-base';
 import Login from './src/components/Login';
 import Dashboard from './src/navigation/navigation';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
@@ -88,12 +88,12 @@ class App extends Component {
  
   render(){
   return (
-    <>
+    <Root style={{flexGrow:1}}>
       <StatusBar barStyle="dark-content" backgroundColor={Constant.backGroundColor} />
       
         <AppContainer/>
     
-    </>
+    </Root>
   );
 };
 }
